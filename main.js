@@ -40,7 +40,7 @@ async function loadStations(url) {
     let jsondata = await response.json();
     //console.log(jasondata);
     L.geoJSON(jsondata, {
-        attribution: "Datenquelle: <a href='https://data.wien.gv.at'>Stadt Wien</a>",
+        attribution: "Datenquelle: <a href='https://www.eea.europa.eu/en/datahub/'>EEA</a>",
         pointToLayer: function (feature, latlng) {
             return L.marker(latlng, {
                 icon: L.icon({
@@ -49,6 +49,15 @@ async function loadStations(url) {
                     popupAnchor: [0, -37],
                 })
             });
+        },
+        onEachFeature: function (feature, layer) {
+            //console.log(feature.properties);
+            layer.bindPopup(`
+                <img src="${feature.properties.THUMBNAIL}" alt="*">
+                <h4>${feature.properties.NAME}</h4>
+                <addess>${feature.properties.ADRESSE}</addess>
+                <a href="${feature.properties.WEITERE_INF}"target="Wien">Webseite</a>
+            `);
         }
     }).addTo(overlays.stations);
 }
