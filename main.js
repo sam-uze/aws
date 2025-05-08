@@ -80,6 +80,7 @@ function showTemperature(jsondata) {
         pointToLayer: function (feature, latlng){
             return L.marker(latlng,{
                 icon: L.divIcon({
+                    className: "aws-div-icon",
                     html: `<span> ${feature.properties.LT}</span>`
                 }),
             })
