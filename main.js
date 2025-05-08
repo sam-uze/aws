@@ -40,7 +40,7 @@ async function loadStations(url) {
     console.log(url)
     let response = await fetch(url);
     let jsondata = await response.json();
-    //console.log(jasondata);
+    //console.log(jsondata);
     L.geoJSON(jsondata, {
         attribution: "Datenquelle: <a href='https://www.eea.europa.eu/en/datahub/'>EEA</a>",
         pointToLayer: function (feature, latlng) {
@@ -67,9 +67,22 @@ async function loadStations(url) {
                 <span>${pointInTime.toLocaleString()}</span>
             `);
         }
-    }).addTo(overlays.stations);
+    }).addTo(overlays.stations)
+    showTemperature(jsondata);
 }
 
 
 // Wetterstationen laden
 loadStations("https://static.avalanche.report/weather_stations/stations.geojson");
+
+function showTemperature(jsondata) {
+    L.geoJSON(jsondata, {
+        pointToLayer: function (feature, latlng){
+            return L.marker(latlng,{
+                icon: L.divIcon({
+                    html: `<span> ${feature.properties.LT}</span>`
+                }),
+            })
+        },
+    }).addTo(overlays.temperature);
+}
