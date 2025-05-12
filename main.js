@@ -15,6 +15,7 @@ let overlays = {
     stations: L.featureGroup(),
     temperature: L.featureGroup().addTo(map),
     wind: L.featureGroup(),
+    snow: L.featureGroup(),
 }
 
 // Layer control
@@ -30,6 +31,7 @@ L.control.layers({
     "Wetterstationen": overlays.stations,
     "Temperatur": overlays.temperature,
     "Wind": overlays.wind,
+    "Schneehöhe": overlays.snow,
 }).addTo(map);
 
 // Maßstab
@@ -57,7 +59,7 @@ async function loadStations(url) {
         onEachFeature: function (feature, layer) {
             let pointInTime = new Date(feature.properties.date);
             //console.log(pointInTime);
-            //console.log(feature);
+            console.log(feature);
             layer.bindPopup(`
                 <h4>${feature.properties.name} (${feature.geometry.coordinates[2]}m)</h4>
                 <ul>
@@ -72,6 +74,7 @@ async function loadStations(url) {
     }).addTo(overlays.stations)
     showTemperature(jsondata);
     showWind(jsondata);
+    showSnow(jsondata);
 
 }
 
@@ -79,6 +82,7 @@ async function loadStations(url) {
 // Wetterstationen laden
 loadStations("https://static.avalanche.report/weather_stations/stations.geojson");
 
+// Funktion um die Temperatur anzuzeigen
 function showTemperature(jsondata) {
     L.geoJSON(jsondata, {
         filter: function (feature) {
@@ -99,8 +103,8 @@ function showTemperature(jsondata) {
     }).addTo(overlays.temperature);
 }
 
-
-function showWind(jsondata) {
+// Funktion um die Windgeschwindigkeit anzuzeigen
+function showSnow(jsondata) {
     L.geoJSON(jsondata, {
         filter: function (feature) {
             if (feature.properties.WG > 0 && feature.properties.WG < 150) {
@@ -120,7 +124,30 @@ function showWind(jsondata) {
     }).addTo(overlays.wind);
 }
 
-console.log(COLORS);
+// Funktion um die Schneehöhe anzuzeigen
+function showWind(jsondata) {
+    L.geoJSON(jsondata, {
+        filter: function (feature) {
+            console.log(feature.properties)
+            if (feature.properties.HS > 0 && feature.properties.HS < 1000) {
+                return true;
+            }
+
+        },
+        pointToLayer: function (feature, latlng){
+            let color = getColor(feature.properties.HS, COLORS.snow);
+            return L.marker(latlng,{
+                icon: L.divIcon({
+                    className: "aws-div-icon-snow",
+                    html: `<span style="background-color:${color}"> ${feature.properties.HS.toFixed(1)}</span>`
+                })
+            })
+        },
+    }).addTo(overlays.snow);
+}
+
+// Funktion um die Farben zu bestimmen
+//console.log(COLORS);
 function getColor(value, ramp) {
     for (let rule of ramp) {
         if (value >= rule.min && value < rule.max) {
@@ -129,3 +156,6 @@ function getColor(value, ramp) {
         
     }
 }
+
+
+
