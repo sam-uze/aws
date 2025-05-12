@@ -41,6 +41,18 @@ L.control.scale({
     imperial: false,
 }).addTo(map);
 
+// Rainviewer
+L.control.rainviewer({ 
+    position: 'bottomleft',
+    nextButtonText: '>',
+    playStopButtonText: 'Play/Stop',
+    prevButtonText: '<',
+    positionSliderLabelText: "Hour:",
+    opacitySliderLabelText: "Opacity:",
+    animationInterval: 500,
+    opacity: 0.5
+}).addTo(map);
+
 // Wetterstationen
 async function loadStations(url) {
     console.log(url)
@@ -149,7 +161,7 @@ function showWind(jsondata) {
     }).addTo(overlays.snow);
 }
 
-
+// Funktion um die Windrichtung anzuzeigen
 function showDirect(jsondata) {
     L.geoJSON(jsondata, {
         filter: function (feature) {
@@ -164,7 +176,7 @@ function showDirect(jsondata) {
             return L.marker(latlng,{
                 icon: L.divIcon({
                     className: "aws-div-icon-wind",
-                    html: `<span style="background-color:${color}"> ${feature.properties.WR.toFixed(1)}</span>`
+                    html: `<span style="background-color:${color}"> ${feature.properties.WR.toFixed(1)}°</span>`
                 })
             })
         },
