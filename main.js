@@ -177,7 +177,7 @@ function showDirect(jsondata) {
             return L.marker(latlng,{
                 icon: L.divIcon({
                     className: "aws-div-icon-wind",
-                    html: `<span style="background-color:${color}"> ${feature.properties.WR.toFixed(1)}°</span>`
+                    html: `<span style="transform:rotate(${feature.properties.WR}deg); background-color:${color}"> <i class="fa-solid fa-circle-arrow-down"></i></span>`,
                 })
             })
         },
